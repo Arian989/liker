@@ -43,9 +43,8 @@ function sendLike() {
     try {
         var videoId = "";
         if (url.includes("/video/")) {
-            // URL থেকে ভিডিও আইডি আলাদা করা
             var parts = url.split("/video/");
-            if(parts[1]) {
+            if(parts && parts[1]) {
                 videoId = parts[1].split("?")[0];
             }
         } else {
@@ -60,11 +59,11 @@ function sendLike() {
             return;
         }
         
-        var likeApiUrl = "https://tiktok.com" + videoId + "&type=1";
+        var targetUrl = "https://tiktok.com" + videoId + "&type=1";
+        var proxyUrl = "https://allorigins.win" + encodeURIComponent(targetUrl);
         
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", like_api_url, true);
-        xhr.withCredentials = true; 
+        xhr.open("GET", proxyUrl, true);
         
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
