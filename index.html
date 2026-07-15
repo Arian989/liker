@@ -5,86 +5,145 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TikTok Auto Liker Panel</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #121212; color: white; text-align: center; padding: 20px; }
-        .container { max-width: 400px; margin: 50px auto; background: #1e1e1e; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(255,0,0,0.2); }
-        h2 { color: #fe2c55; }
-        input { width: 90%; padding: 12px; margin: 20px 0; border-radius: 8px; border: 1px solid #333; background: #2a2a2a; color: white; text-align: center; font-size: 14px; }
-        button { width: 95%; padding: 12px; background: #fe2c55; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
-        button:hover { background: #e0244d; }
-        #status { margin-top: 20px; font-weight: bold; color: #00ffcc; font-size: 14px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #121212;
+            color: white;
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        h2 {
+            color: #fe2c55;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        p {
+            color: #b3b3b3;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        input {
+            width: 100%;
+            padding: 14px;
+            background: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 16px;
+        }
+        input:focus {
+            border-color: #fe2c55;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #fe2c55;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #e12247;
+        }
+        #status {
+            margin-top: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>TikTok Auto Liker</h2>
-    <p>Paste your TikTok video link below and press the button</p>
-    
-    <input type="text" id="videoLink" placeholder="Paste TikTok Video Link Here">
-    <button onclick="sendLike()">❤️ Send Like</button>
-    
-    <div id="status"></div>
-</div>
+    <div class="container">
+        <h2>TikTok Auto Liker</h2>
+        <p>Paste your TikTok video link below and press the button</p>
+        
+        <input type="text" id="videolink" placeholder="Paste TikTok Video Link Here">
+        <button onclick="sendLike()">❤️ Send Like</button>
+        
+        <div id="status"></div>
+    </div>
 
-<script>
-function sendLike() {
-    var url = document.getElementById("videoLink").value;
-    var statusDiv = document.getElementById("status");
-    
-    if (!url.includes("tiktok.com")) {
-        statusDiv.style.color = "red";
-        statusDiv.innerText = "Error: Invalid TikTok Link!";
-        return;
-    }
-    
-    statusDiv.style.color = "#00ffcc";
-    statusDiv.innerText = "Processing... Sending like to your video...";
-    
-    try {
-        var videoId = "";
-        if (url.includes("/video/")) {
-            var parts = url.split("/video/");
-            if(parts && parts[1]) {
-                videoId = parts[1].split("?")[0];
+    <script>
+        function sendLike() {
+            const url = document.getElementById("videolink").value.trim();
+            const statusDiv = document.getElementById("status");
+
+            if (!url.includes("tiktok.com")) {
+                statusDiv.style.color = "red";
+                statusDiv.innerText = "Error: Invalid TikTok Link!";
+                return;
             }
-        } else {
-            statusDiv.style.color = "red";
-            statusDiv.innerText = "Error: Please use desktop/full video link!";
-            return;
-        }
-        
-        if(!videoId) {
-            statusDiv.style.color = "red";
-            statusDiv.innerText = "Error: Video ID not found!";
-            return;
-        }
-        
-        var targetUrl = "https://tiktok.com" + videoId + "&type=1";
-        var proxyUrl = "https://allorigins.win" + encodeURIComponent(targetUrl);
-        
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", proxyUrl, true);
-        
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    statusDiv.style.color = "lightgreen";
-                    statusDiv.innerText = "Success! Like has been sent from your account.";
+
+            statusDiv.style.color = "#00ffcc";
+            statusDiv.innerText = "Processing... Sending like to your video...";
+
+            try {
+                let videoId = "";
+                if (url.includes("/video/")) {
+                    const parts = url.split("/video/");
+                    if (parts[1]) {
+                        videoId = parts[1].split("?")[0];
+                    }
                 } else {
                     statusDiv.style.color = "red";
-                    statusDiv.innerText = "Error: Failed to send. Make sure you are logged in TikTok on this browser.";
+                    statusDiv.innerText = "Error: Please use desktop/full video link!";
+                    return;
                 }
+
+                if (!videoId) {
+                    statusDiv.style.color = "red";
+                    statusDiv.innerText = "Error: Video ID not found!";
+                    return;
+                }
+
+                const targetUrl = `https://tiktok.com{videoId}&atype=1`;
+                const proxyUrl = `https://allorigins.win{encodeURIComponent(targetUrl)}`;
+
+                const xhr = new XMLHttpRequest();
+                xhr.open("GET", proxyUrl, true);
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            statusDiv.style.color = "lightgreen";
+                            statusDiv.innerText = "Success! Like has been sent from your account.";
+                        } else {
+                            statusDiv.style.color = "red";
+                            statusDiv.innerText = "Error: Failed to send. Make sure you are logged in TikTok on this browser.";
+                        }
+                    }
+                };
+                xhr.send();
+
+            } catch (e) {
+                statusDiv.style.color = "red";
+                statusDiv.innerText = "Error: Something went wrong! Try again.";
             }
-        };
-        
-        xhr.send();
-        
-    </div> catch (e) {
-        statusDiv.style.color = "red";
-        statusDiv.innerText = "Error: Something went wrong! Try again.";
-    }
-}
-</script>
+        }
+    </script>
 
 </body>
 </html>
